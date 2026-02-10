@@ -60,6 +60,11 @@ runs:
         if [ ! -z "${{ inputs.env_file }}" ]; then
           echo "${{ inputs.env_file }}" > env.tmp
         fi
+    - name: Verify files exist locally
+      shell: bash
+      run: |
+        ls -la docker-compose.yml
+        ls -la env.tmp || echo "env.tmp is missing"
 
     - name: Copy Docker Compose and env to Server
       uses: appleboy/scp-action@v0.1.7
