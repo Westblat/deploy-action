@@ -16,7 +16,7 @@ inputs:
     description: 'Optional sub-name (e.g. web). Leave blank for root image.'
     required: false
     default: ''
-  env_file_content:
+  env_file:
     description: 'Full content of .env file from secrets'
     required: false
     default: ''
