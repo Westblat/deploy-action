@@ -84,6 +84,8 @@ runs:
         script: |
           echo "${{ inputs.ghcr_token }}" | docker login ghcr.io -u ${{ inputs.ghcr_user }} --password-stdin
           cd ~/${{ github.event.repository.name }}
+          echo "Current directory: $(pwd)"
+          echo "Files received: $(ls -m)"
           if [ -f env.tmp ]; then mv env.tmp .env; fi
           export IMAGE_TAG=${{ github.ref_name }}
           export GITHUB_REPOSITORY=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
