@@ -16,6 +16,10 @@ inputs:
     description: 'Optional sub-name (e.g. web). Leave blank for root image.'
     required: false
     default: ''
+  env_file_content:
+    description: 'Full content of .env file from secrets'
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -48,14 +52,19 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+    - name: Prepare .env file
+      if: ${{ inputs.env_file_content != '' }}
+      shell: bash
+      run: |
+        echo "${{ inputs.env_file_content }}" > env.tmp
 
-    - name: Copy Docker Compose to Server
+    - name: Copy Docker Compose and env to Server
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ inputs.ssh_host }}
         username: ${{ inputs.ssh_user }}
         key: ${{ inputs.ssh_key }}
-        source: "docker-compose.yml"
+        source: "docker-compose.yml,env.tmp"
         target: "~/${{ github.event.repository.name }}/"
 
     - name: Deploy via SSH
@@ -67,6 +76,7 @@ runs:
         script: |
           echo "${{ inputs.ghcr_token }}" | docker login ghcr.io -u ${{ inputs.ghcr_user }} --password-stdin
           cd ~/${{ github.event.repository.name }}
+          if [ -f env.tmp ]; then mv env.tmp .env; fi
           export IMAGE_TAG=${{ github.ref_name }}
           export GITHUB_REPOSITORY=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           export IMAGE_NAME_SUFFIX="${{ inputs.image_name }}"
