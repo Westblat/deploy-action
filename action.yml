@@ -63,7 +63,7 @@ runs:
     - name: Verify files exist locally
       shell: bash
       run: |
-        ls -la docker-compose.yml
+        ls -la docker-compose.yaml
         ls -la env.tmp || echo "env.tmp is missing"
 
     - name: Copy Docker Compose and env to Server
@@ -72,7 +72,7 @@ runs:
         host: ${{ inputs.ssh_host }}
         username: ${{ inputs.ssh_user }}
         key: ${{ inputs.ssh_key }}
-        source: "docker-compose.yml,env.tmp"
+        source: "docker-compose.yaml,env.tmp"
         target: "~/${{ github.event.repository.name }}/"
 
     - name: Deploy via SSH
