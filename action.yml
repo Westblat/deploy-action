@@ -52,11 +52,12 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+    
     - name: Prepare .env file
-      if: ${{ inputs.env_file_content != '' }}
+      if: ${{ inputs.env_file != '' }}
       shell: bash
       run: |
-        echo "${{ inputs.env_file_content }}" > env.tmp
+        echo "${{ inputs.env_file }}" > env.tmp
 
     - name: Copy Docker Compose and env to Server
       uses: appleboy/scp-action@v0.1.7
